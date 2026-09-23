@@ -45,11 +45,8 @@ jobs:
       - name: Typecheck and build
         run: npm run build
 
-      # NOTE: src/pages/users/Users.test.tsx makes a real HTTP request to
-      # jsonplaceholder.typicode.com — there are no mocks in this repo. If this
-      # step fails with a network/timeout error rather than an assertion, the
-      # external API is the likely cause, not the PR. Mocking that call would
-      # make CI hermetic.
+      # Hermetic: Users.test.tsx mocks axios with jest.mock, so no test makes a
+      # real HTTP request and this step needs no network or mock server.
       - name: Test
         run: npm run test:coverage -- --ci
 

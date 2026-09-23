@@ -42,9 +42,8 @@ The required status check is the job named **`Lint, typecheck, test`**. Renaming
 the job silently detaches that check from branch protection, so leave the `name:`
 alone unless you also update the branch rule.
 
-Because `Users.test.tsx` talks to the real jsonplaceholder API (see Testing
-below), CI can go red for reasons unrelated to the PR. A network or timeout
-error in the test step, rather than an assertion failure, points at the API.
+The test step is hermetic: no test makes a real HTTP request (see Testing
+below), so a red test step points at the PR, not at jsonplaceholder.
 
 ## Testing
 
@@ -53,11 +52,12 @@ error in the test step, rather than an assertion failure, points at the API.
   `*.test.tsx`.
 - The full suite always runs to completion — `bail` is deliberately not set, so
   a red CI run reports every failing suite, not just the first one.
-- **`Users.test.tsx` hits the live network.** There is no MSW, `jest.mock`, or
-  any other stub in this repo; the component's `axios.get` really calls
-  jsonplaceholder. Those tests fail offline or if the API changes shape. If you
-  add tests around `userService`, prefer introducing a mock over adding more
-  live-network assertions.
+- **No test touches the network.** `Users.test.tsx` calls `jest.mock("axios")`
+  and stubs `axios.get` with fixture users via `jest.mocked(axios.get)`. Do the
+  same in any new test that fetches data — never add live-network assertions.
+- `AppProvider`'s `QueryClient` is a module singleton, so its cache carries over
+  between tests in the same file. A test that needs a fresh fetch (e.g. an
+  error state) can't rely on an earlier test's cache being empty.
 - Query components under test with `AppProvider` as the wrapper so React Query
   has a client: `render(<Users />, { wrapper: AppProvider })`.
 
