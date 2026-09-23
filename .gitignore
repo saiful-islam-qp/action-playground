@@ -141,8 +141,3 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# Editor / OS cruft (from the Vite template)
-.DS_Store
-*.local
-.idea
