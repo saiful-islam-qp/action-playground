@@ -33,12 +33,8 @@ const Users = () => {
         accessorKey: "phone",
         header: "Phone",
       },
-      {
-        accessorKey: "website",
-        header: "Website",
-      },
     ],
-    []
+    [],
   );
 
   const defaultData = useMemo(() => [] as IUser[], []);
